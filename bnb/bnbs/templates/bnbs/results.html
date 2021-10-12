@@ -1,0 +1,251 @@
+<!-- Information Organization, October 2021 -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    AirBnBest
+{% endblock %}
+
+
+{% block header %}
+{{ num_results }} results
+  {% endblock %}
+{% block more_filters %}
+    <div class="form-group">
+
+    <form name="test" method="GET" action="{% url 'more_filters' %}">
+      {% csrf_token %}
+    <table style="table-layout: auto;">
+        <tr>
+            <td>
+                <h3 style="text-align: left">Filters</h3>
+            </td>
+        </tr>
+        <!-- Filters selected on homepage -->
+        <tr>
+            <td class="result_title">
+                Price
+            </td>
+            <td class="result_properties">
+                <input class="form-control form-control-sm" type="number" name="price" value="{{ price }}" placeholder="{{ price }}" >
+            </td>
+        </tr>
+        <tr>
+            <td class="result_title">
+                Type of place
+            </td>
+            <td class="result_properties">
+                <div class="d-grid gap-2 d-md-block" role="group" aria-label="Basic checkbox toggle button group">
+                    <div class="checks_group">
+                        {% if 'Entire home/apt' in room_types %}
+                            <input type="checkbox" class="btn-check" name="Entire home/apt" id="Entire home/apt" autocomplete="off" value="Entire home/apt" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Entire home/apt" style="font-size: 0.85em">Entire home/apt</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Entire home/apt" id="Entire home/apt" autocomplete="off" value="Entire home/apt">
+                            <label class="btn btn-outline-secondary btn-sm" for="Entire home/apt" style="font-size: 0.85em">Entire home/apt</label>                       
+                        {% endif %}
+
+                        {% if 'Hotel room' in room_types %}
+                            <input type="checkbox" class="btn-check" name="Hotel room" id="Hotel room" autocomplete="off" value="Hotel room" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Hotel room" style="font-size: 0.85em">Hotel room</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Hotel room" id="Hotel room" autocomplete="off" value="Hotel room">
+                            <label class="btn btn-outline-secondary btn-sm" for="Hotel room" style="font-size: 0.85em">Hotel room</label>     
+                        {% endif %}              
+                    </div>
+                    
+                    <div class="checks_group">
+                        {% if 'Private room' in room_types %}
+                            <input type="checkbox" class="btn-check" name="Private room" id="Private room" autocomplete="off" value="Private room" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Private room" style="font-size: 0.85em">Private room</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Private room" id="Private room" autocomplete="off" value="Private room">
+                            <label class="btn btn-outline-secondary btn-sm" for="Private room" style="font-size: 0.85em">Private room</label>
+                        {% endif %}
+
+                        {% if 'Shared room' in room_types %}         
+                            <input type="checkbox" class="btn-check" name="Shared room" id="Shared room" autocomplete="off" value="Shared room" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Shared room" style="font-size: 0.85em">Shared room</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Shared room" id="Shared room" autocomplete="off" value="Shared room">
+                            <label class="btn btn-outline-secondary btn-sm" for="Shared room" style="font-size: 0.85em">Shared room</label>
+                        {% endif %}                       
+                    </div>
+                  </div>
+          
+            </td>
+        </tr>
+        <tr>
+            <td class="result_title">
+                With
+            </td>
+            <td class="result_properties">
+                <select class="form-select" aria-label=".form-select example" name="property_types" style="max-width: 200px">
+                    {% if property_types != "None" %}
+                    <option selected value="{{ property_types }}">{{ property_types }}</option>
+                    {% else %}
+                    <option selected value="None">Property types</option>
+                    {% endif %}
+                    <option value="None">Property type</option>
+                    {% for each in all_property_types %}
+                        <option value="{{ each.property }}" style="text-align:left">{{ each.property }}</option>
+                    {% endfor %}
+                  </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="result_title">
+                Accommodates
+            </td>
+            <td class="result_properties">
+                <input class="form-control form-control-sm" type="number" name="accommodates" value="{{ accommodates }}" placeholder="{{ accommodates }}">
+            </td>
+        </tr>
+        <tr>
+            <td class="result_title">
+                With
+            </td>
+            <td class="result_properties">
+                <select class="form-select" aria-label=".form-select example" name="facility" style="max-width: 200px">
+                    {% if facility != "None" %}
+                    <option selected value="{{ facility.pk }} {{ facility_type }}">{{ facility }}</option>
+                    {% else %}
+                    <option selected value="None">Facility</option>
+                    {% endif %}
+                    <option value="None">Facility</option>
+                    <option value="Museums and galleries" disabled>Museums and galleries</b></option>
+                    {% for each in art %}
+                    <option value="{{ each.pk }} MUSEUM" style="text-align:left">{{ each.name }}</option>
+                    {% endfor %}
+                    <option value="Shopping areas" disabled><b>Shopping areas</b></option>
+                    {% for each in shop %}
+                    <option value="{{ each.pk }} SHOP" style="text-align:left">{{ each.name }}</option>
+                    {% endfor %}
+            
+                  </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="result_title">
+                
+            </td>
+            <td class="result_properties">
+                within
+                <input class="form-control form-control-sm" type="number" name="fac_distance" step="100" value="{{ fac_distance }}" placeholder="{{ fac_distance }}" style="margin: 0.3em">
+                meters
+            </td>
+
+        </tr> 
+        <tr>
+            <td class="result_title" style="display: inline-block;">With </td>
+            <td class="results_properties">
+                <div class="d-grid gap-2 d-md-block" role="group" aria-label="Basic checkbox toggle button group">
+                    <div class="checks_group">
+                        {% if 'Museum/gallery' in facs_near %}
+                            <input type="checkbox" class="btn-check" name="Museum/gallery" id="Museum/gallery" autocomplete="off" value="Museum/gallery" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Museum/gallery" style="font-size: 0.85em">Museum/gallery</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Museum/gallery" id="Museum/gallery" autocomplete="off" value="Museum/gallery">
+                            <label class="btn btn-outline-secondary btn-sm" for="Museum/gallery" style="font-size: 0.85em">Museum/gallery</label>                       
+                        {% endif %}
+
+                        {% if 'Restaurant' in facs_near %}
+                            <input type="checkbox" class="btn-check" name="Restaurant" id="Restaurant" autocomplete="off" value="Restaurant" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Restaurant" style="font-size: 0.85em">Restaurant</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Restaurant" id="Restaurant" autocomplete="off" value="Restaurant">
+                            <label class="btn btn-outline-secondary btn-sm" for="Restaurant" style="font-size: 0.85em">Restaurant</label>     
+                        {% endif %}              
+                    </div>
+                    
+                    <div class="checks_group">
+                        {% if 'Shopping area' in facs_near %}
+                            <input type="checkbox" class="btn-check" name="Shopping area" id="Shopping area" autocomplete="off" value="Shopping area" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="Shopping area" style="font-size: 0.85em">Shopping area</label>
+                        {% else %}
+                            <input type="checkbox" class="btn-check" name="Shopping area" id="Shopping area" autocomplete="off" value="Shopping area">
+                            <label class="btn btn-outline-secondary btn-sm" for="Shopping area" style="font-size: 0.85em">Shopping area</label>
+                        {% endif %}
+                 
+                    </div>
+                  </div>
+            </td>
+
+        </tr>
+        <tr>
+            <td class="result_title">
+                
+            </td>
+            <td class="result_properties">
+                within
+                <input class="form-control form-control-sm" type="number" name="all_fac_distance" step="100" value="{{ all_fac_distance }}" placeholder="{{ all_fac_distance }}" style="margin: 0.3em">
+                meters
+            </td>
+
+        </tr> 
+
+        <tr>
+            <td class="result_title">
+                Neighbourhood:
+            </td>
+            <td class="result_properties">
+                <select class="form-select" aria-label=".form-select example" name="neighbourhood" style="max-width: 200px">
+                    {% if neighbourhood != "None" %}
+                        <option value="None">Neighbourhood</option>
+                        <option selected value="{{ neighbourhood }}">{{ neighbourhood }}</option>
+                    {% else %}
+                        <option selected value="None">Neighbourhood</option>
+                    {% endif %}
+    
+                    {% for each in neighbourhoods %}
+                        <option value="{{ each.neighbourhood }}" style="text-align:left">{{ each.neighbourhood }}</option>
+                    {% endfor %}
+                  </select>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" rowspan="2" style="padding: 1.5em" class="center"><button class="btn btn-primary btn" type="submit" name="action" style="width:80%">Search</button></td>
+        </tr>
+    </form> 
+    </table>
+    </div>
+{% endblock %}
+
+
+  {% block body %}
+    <table>
+        <tr>
+        {% for result in results %}
+        <td class="cell">
+            <p><a href='/{{ result.room_id }}'>
+            <img src="{{ result.picture_url }}" class="result_img">
+            </p>
+            <Center>
+            <span class="descr">
+            <b>{{ result.name }}</b><br>
+            </span>
+        </a>
+        </Center>
+            <b>Price:</b> € {{ result.price_eu }}<br>
+        </td>
+        {% if forloop.counter|divisibleby:3 %}
+            </tr><tr>
+        {% endif %}
+        {% if forloop.counter == results|length %}
+            {% if results|length|divisibleby:3 %}
+            {% elif results|length|divisibleby:2 %}
+            <td></td>
+            {% else%}
+            <td></td><td></td>
+            {% endif %}
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </table>
+
+
+{% endblock %}
